@@ -1,0 +1,27 @@
+### 게시물 목록
+GET http://localhost:9999/shop/boards
+Content-Type:application/json
+
+### 게시물 등록
+POST http://localhost:9999/shop/boards
+Content-Type:application/json
+
+{ 
+    "title":"게시판 등록 테스트",
+    "writer":"jh3",
+    "content":"내용없음"
+}
+
+###게시물 1건 조회
+GET http://localhost:9999/shop/boards/1
+Content-Type:application/json
+
+###게시물 1건 수정
+PUT http://localhost:9999/shop/boards/1
+Content-Type:application/json
+
+{ 
+    "title":"게시판 등록 테스트",
+    "writer":"jh5",
+    "content":"내용없음"
+}

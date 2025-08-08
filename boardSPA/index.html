@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SPA</title>
+    <style>
+      #app{
+        width: 1400px;
+        height: 800px;
+      }
+
+      #aside_regist{
+        width: 200px;
+        height: 800px;
+        float: left;
+        background: antiquewhite;
+      } 
+
+
+      #content{
+        width: 1000px;
+        height: 800px;
+        float: left;
+        background: beige;
+      }
+
+      #aside_detail{
+        width: 200px;
+        height: 800px;
+        float: left;
+        background: antiquewhite;
+      }
+
+      #content_header{
+        width: 1000px;
+        height: 50px;
+        float: left;
+        background: burlywood;
+      }
+
+      #content_list{
+        width: 1000px;
+        height: 750px;
+        float: left;
+        background: bisque;
+      }
+
+      #aside_regist, #aside_detail {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;    /* 내부 폼이 영역을 꽉 채움 */
+        justify-content: flex-start;
+        padding: 0;
+      }
+
+      #aside_regist form, #aside_detail form {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100%;          /* 부모를 최대한 채움 */
+        gap: 12px;             /* 폼 요소 간격 조정 */
+      }
+
+      #aside_regist input[type="text"],
+      #aside_regist textarea,
+      #aside_regist input[type="button"],
+      #aside_detail input[type="text"],
+      #aside_detail textarea,
+      #aside_detail input[type="button"] {
+        width: 90%;                  /* 양 옆 채움 */
+        padding-left: 5%;
+        padding-right: 5%;
+        box-sizing: border-box;
+      }
+
+      #aside_regist textarea,
+      #aside_detail textarea {
+        flex: 1;                      /* textarea가 공간 더 많이 차지 */
+        min-height: 80px;             /* 최소 높이 */
+        resize: none;                 /* 크기 고정(원하면 해제 가능) */
+      }
+
+      #aside_regist input[type="button"],
+      #aside_detail input[type="button"] {
+        height: 36px;
+      }
+
+    </style>
+</head>
+<body>
+<div id="app">
+  <div id="aside_regist">
+    <h2>가입</h2>
+    <form id="form1">
+      <input type="text" name="title" placeholder="제목입력">
+      <input type="text" name="writer" placeholder="작성자">
+      <textarea name="content" placeholder="내용 입력"></textarea>
+      <input type="button" name="regitBtn" value="작성">
+    </form>
+  </div>
+  <div id="content">
+    <div id="content_header"></div>
+    <div id="content_list"> </div>
+  </div>
+  <div id = "aside_detail">
+    <h2>상세</h2>
+    <form id="form2">
+      <input type="text" name="title" placeholder="제목입력">
+      <input type="text" name="writer" placeholder="작성자">
+      <textarea name="content" placeholder="내용 입력"></textarea>
+      <input type="button" name="regitBtn" value="수정">
+    </form>
+  </div>
+</div>
+</body>
+</html>
