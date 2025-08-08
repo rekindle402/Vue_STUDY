@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Vue 애플리케이션을 개발하는 2가지 방법
+        1) CDN 방식 - 주로 개발 단계에서 사용 추천 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <button @click="add()">카운트 증가</button>
+        <h1>{{count}}</h1>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data(){
+                return{ 
+                    count:0
+                }
+            },
+            methods:{
+                add(){
+                    this.count++;
+                }
+            }
+        });
+        app.mount("#app");
+    </script>
+</body>
+</html>
