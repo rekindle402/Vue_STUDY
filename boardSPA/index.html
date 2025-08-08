@@ -115,7 +115,7 @@
     <div id="content">
       <div id="content_header"></div>
       <div id="content_list">
-        <table width="100%" border="1px" b>
+        <table width="100%" border="1px">
           <thead>
             <tr>
               <th>No</th>
@@ -127,12 +127,11 @@
           </thead>
           <tbody>
             <tr v-for="board in boardList">
-              <td>
-              <td>
-              <td>Title</td>
-              <td>Writer</td>
-              <td>regdate</td>
-              <td>hit</td>
+              <td>{{board.board_id}}</td>
+              <td><a href="#" @click="getDetail(board.board_id)">{{board.title}}</a></td>
+              <td>{{board.writer}}</td>
+              <td>{{board.regdate}}</td>
+              <td>{{board.hit}}</td>
             </tr>
           </tbody>
         </table>
@@ -141,10 +140,11 @@
     <div id="aside_detail">
       <h2>상세</h2>
       <form id="form2">
-        <input type="text" name="title" placeholder="제목입력">
-        <input type="text" name="writer" placeholder="작성자">
-        <textarea name="content" placeholder="내용 입력"></textarea>
-        <input type="button" name="regitBtn" value="수정">
+        <input type="text" name="title" placeholder="제목입력" v-model="board.title">
+        <input type="text" name="writer" placeholder="작성자" v-model="board.writer">
+        <textarea name="content" placeholder="내용 입력" v-model="board.content"></textarea>
+        <input type="button" @click="edit()" value="수정">
+        <input type="button" @click="del()" value="삭제">
       </form>
     </div>
   </div>
@@ -153,7 +153,12 @@
     const app = Vue.createApp({
       data() {
         return {
-          boardList: ["", "", "", ""]
+          // UI 영역에 바인딩 시키고 싶은 데이터 선언
+          // 이 데이터들은 일반 데이터가 아닌 UI로 연결되어 있으므로, 이 값만 변경해도
+          // UI가 자동으로 바뀐다.. 이러한 유형의 Vue의 데이터를 가리켜 바인딩 데이터라고 함.
+          boardList: [],
+
+          board: { title: "", writer: "", cotent: "" }
         };
       },
       methods: {
@@ -162,7 +167,7 @@
             {
               title: $("#form1 input[name='title']").val(),
               writer: $("#form1 input[name='writer']").val(),
-              content: $("#form1 input[name='content']").val()
+              content: $("#form1 textarea[name='content']").val()
             });
 
           // 비동기 글 쓰기 요청
@@ -171,24 +176,99 @@
             type: "POST",
             contentType: "application/json",
             data: data,
-            success: function (result, status, xhr) {
+            success: (result, status, xhr) => {
               console.log(result);
+              this.getList();
             },
             error: function (xhr, status, err) {
               console.log(err);
             }
           });
         },
-          
+
+        // 목록 요청
         getList() {
           $.ajax({
             url: "http://192.168.70.13:9999/shop/boards",
             type: "GET",
-            success: function (result, status, xhr) {
+            //화살표 함수는 상위 contextr를 가리킴
+            success: (result, status, xhr) => {
               console.log(result);
+              console.log(this);
               this.boardList = result;
             }
           });
+        },
+
+        // 상세 글 요청
+        getDetail(board_id) {
+          $.ajax({
+            url: "http://192.168.70.13:9999/shop/boards/" + board_id,
+            type: "GET",
+            //화살표 함수는 상위 contextr를 가리킴
+            success: (result, status, xhr) => {
+              console.log("서버로부터 받은 게시물 한건 : ", result);
+              console.log(result);
+              console.log(this);
+              this.board = result;
+            }
+          });
+        },
+
+        //수정
+        edit() {
+          if (this.board.board_id == undefined) {
+            alert("수정할 글을 선택해주세요");
+            return;
+          }
+
+          console.log(this.board.board_id)
+
+          let data = JSON.stringify(
+            {
+              title: $("#form2 input[name='title']").val(),
+              writer: $("#form2 input[name='writer']").val(),
+              content: $("#form2 textarea[name='content']").val()
+            });
+
+
+          $.ajax({
+            url: "http://192.168.70.13:9999/shop/boards/" + this.board.board_id,
+            type: "PUT",
+            contentType: "application/json",
+            data: data,
+            success: (result, status, xhr) => {
+              this.getList();
+            },
+            error: (xhr, status, result) => {
+              alert(err);
+            }
+          })
+        },
+
+        del() {
+          if (this.board.board_id == undefined) {
+            alert("삭제하실 글을 선택해주세요");
+            return;
+          }
+
+          console.log(this.board.board_id)
+
+          $.ajax({
+            url: "http://192.168.70.13:9999/shop/boards/" + this.board.board_id,
+            type: "DELETE",
+            success: (result, status, xhr) => {
+              this.getList();
+            },
+            error: (xhr, status, result) => {
+              alert(err);
+            }
+          })
+        },
+
+        mounted() {
+          this.getList();
+          this.getDetail();
         }
       }
     });
