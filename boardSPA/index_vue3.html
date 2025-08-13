@@ -193,7 +193,7 @@
         }
 
         //상세보기
-        const getDetail = (board_id) => {
+        const getDetail = (board_id) => {  
           $.ajax({
             url: "http://192.168.70.13:9999/shop/boards/" + board_id,
             method: "GET",
@@ -207,7 +207,7 @@
         //수정
         const edit = () => {
           if (board.board_id == undefined) {
-            alert("수정할 글을 선택해주세요");
+            alert("수정할 글을 선택해주세요"); 
             return;
           }
 
