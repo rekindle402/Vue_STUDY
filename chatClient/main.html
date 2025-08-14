@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        #app {
+            width: 300px;
+            height: 1000px;
+        }
+
+        #headr {
+            width: 100%;
+        }
+
+        #body {
+            width: 100%;
+        }
+
+        #footer {
+            width: 100%;
+        }
+
+        button {
+            width: 100px;
+            height: auto;
+        }
+
+        textarea{
+            width: 90%;
+            height: 200px;
+        }
+        input{
+            width: 90%;
+            height: 50px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="header">
+            <button type="button" @click="connect()">접속</button>
+            <button type="button" @click="sendMsg()">메시지</button>
+            <button type="button" @click="disconnect()">해제</button>
+        </div>
+        <div id="body">
+                <textarea id="area" ref="area" v-model="log"></textarea>
+        </div>
+        <div id="footer">
+            <input type="text" id="msg" v-model="text" @keyup.enter="sendMsg()">
+        </div>
+    </div>
+</body>
+<script>
+    const { createApp, reactive, ref } = Vue;
+
+    createApp({
+        setup() {
+            // 웹소켓 서버 접속 ( 모든 브라우저에서 표준으로 웹 소켓이 지원됨)
+            let ws = null;
+
+            const log=ref(""); // 바인딘 변수
+            const area=ref(null); // textarea 제어를 위한 바인딩 변수
+            let text=ref(""); // input type = text의 값을 가져오기 위한 바인딩 변수ㄱ
+
+            // 로그 기록
+            const appendLog=(msg)=>{
+                log.value+=msg+"\n";
+            }
+
+            // 접속 메서드
+            const connect = function () {
+                ws = new WebSocket("ws://localhost:7777/ws/echo");
+
+                ws.onopen=()=>{
+                    appendLog("Open : 서버 접속 성공");
+                    area.value.style.backgroundColor="yellow";
+                }
+
+                ws.onmessage=(e)=>{
+                    appendLog(e.data);
+                }
+            }
+
+            // 메시지 전송
+            const sendMsg=()=>{
+                ws.send(text.value); // 웹소켓을 통해 메시지를 전송
+                text.value=""; // 입력내용 지우기
+            }
+
+            // 접속 끊기
+            const disconnect=()=>{
+                // 연결중일때만 끊기
+                if(ws && ws.readyState==WebSocket.OPEN){
+                    // 웹소켓에서 1000은 정상 종료 코드를 의미
+                    // 즉, 서버에게 정상 접속 종료를 요청
+                    ws.close(1000,"사용자 요청에 의한 접속 종료");
+                    appendLog("접속 종료");
+                } else {
+                    appendLog("현재 접속중이지 않습니다.");
+                }
+                area.value.style.backgroundColor="";
+            }
+
+            return {area, log, text, connect, sendMsg, disconnect}
+        }
+    }).mount("#app");
+</script>
+
+</html>
